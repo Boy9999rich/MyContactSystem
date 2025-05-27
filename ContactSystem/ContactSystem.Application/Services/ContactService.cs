@@ -12,9 +12,14 @@ public class ContactService : IContactService
         _contactRepository = contactRepository;
     }
 
-    public Task DeleteAsync(long contactId)
+    public async Task DeleteAsync(long contactId)
     {
-        throw new NotImplementedException();
+        var contact = await _contactRepository.SelectByIdAsync(contactId);
+        if (contact == null)
+        {
+            throw new Exception($"Contact not fount to delete with id {contactId}");
+        }
+        await _contactRepository.DeleteAsync(contact);
     }
 
     public ICollection<ContactDto> GetAll()
@@ -26,9 +31,14 @@ public class ContactService : IContactService
         return contactDtos;
     }
 
-    public Task<ContactDto> GetByIdAsync(long contactId)
+    public async Task<ContactDto> GetByIdAsync(long contactId)
     {
-        throw new NotImplementedException();
+        var contact = await _contactRepository.SelectByIdAsync(contactId);
+        if (contact == null)
+        {
+            throw new Exception($"Contact not fount with id {contactId}");
+        }
+        return MapService.ConverToContactDto(contact);
     }
 
     public async Task<long> PostAsync(ContactCreateDto contact)
@@ -38,8 +48,19 @@ public class ContactService : IContactService
         return contactId;
     }
 
-    public Task UpdateAsync(ContactDto contact)
+    public async Task UpdateAsync(ContactDto contactDto)
     {
-        throw new NotImplementedException();
+        var contact = await _contactRepository.SelectByIdAsync(contactDto.ContactId);
+        if (contact == null)
+        {
+            throw new Exception($"Contact not fount to update with id {contactDto.ContactId}");
+        }
+
+        contact.Phone = contactDto.Phone;
+        contact.Email = contactDto.Email;
+        contact.Address = contactDto.Address;
+        contact.Name = contactDto.Name;
+
+        await _contactRepository.UpdateAsync(contact);
     }
 }
