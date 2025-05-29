@@ -1,0 +1,6 @@
+@Awesome.Api_HostAddress = http://localhost:5074
+
+GET {{Awesome.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
